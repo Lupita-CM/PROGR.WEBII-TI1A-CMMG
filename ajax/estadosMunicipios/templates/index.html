@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estados y Municipios</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center text-primary">Selecciona un Estado y Municipio</h1>
+
+        <div class="card shadow-sm p-4 mt-4">
+            <div class="form-group">
+                <label for="estado" class="font-weight-bold">Estado:</label>
+                <select id="estado" class="form-control">
+                    <option value="">Selecciona un estado</option>
+                    {% for estado in estados %}
+                    <option value="{{ estado.id }}">{{ estado.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="municipio" class="font-weight-bold">Municipio:</label>
+                <select id="municipio" class="form-control">
+                    <option value="">Selecciona un municipio</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $("#estado").change(function() {
+            var estadoId = $(this).val();
+            $.ajax({
+                url: "{% url 'ajax_cargar_municipios' %}",
+                data: {
+                    'estado_id': estadoId
+                },
+                success: function(data) {
+                    $("#municipio").html('<option value="">Selecciona un municipio</option>');
+                    $.each(data, function(key, value) {
+                        $("#municipio").append('<option value="' + value.id + '">' + value.nombre + '</option>');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
